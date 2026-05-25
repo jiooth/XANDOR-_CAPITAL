@@ -30,24 +30,30 @@
             background-color: transparent !important;
         }
 
-        /* Video canvas overlay handling */
         .a-canvas {
             background-color: transparent !important;
         }
 
-        /* Floating Premium Gold Buttons UI Container (Fully Transparent Backing) */
+        /* HIDING MIND-AR DEFAULT BLUE LOADING SPINNER AND OVERLAYS */
+        .mindar-ui-loading, .mindar-ui-compatibility, .mindar-ui-scanning {
+            display: none !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* Floating Premium Gold Buttons UI Container (Centered & Raised Higher) */
         .ui-container {
             position: fixed;
-            bottom: 40px;
+            bottom: 12% !important; /* Buttons shifted further up from the bottom edge */
             left: 50%;
             transform: translateX(-50%);
-            width: 85%;
-            max-width: 340px;
+            width: 82%;
+            max-width: 320px;
             z-index: 99999 !important; 
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background: transparent !important; /* No black backgrounds allowed */
+            gap: 14px; /* Slightly increased gap for premium look */
+            background: transparent !important;
             background-color: transparent !important;
         }
         
@@ -72,7 +78,7 @@
         #scanning-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); /* Light semi-transparent shade only during scanning */
+            background: rgba(0,0,0,0.4); 
             z-index: 9999;
             display: flex;
             justify-content: center;
