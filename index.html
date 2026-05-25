@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Xandor Capital</title>
     
+    <!-- Latest Stable A-Frame and Mind-AR Libraries -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.1/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
         
-        /* Premium Gold Buttons UI Container */
+        /* Interactive Video Fix for Mobile (Z-Index Isolate) */
+        a-scene {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; /* Pure camera view moves to back layer */
+        }
+
+        /* Premium Gold Buttons UI Container (Isolated on top layer) */
         .ui-container {
             position: fixed;
             bottom: 40px;
@@ -19,7 +28,7 @@
             transform: translateX(-50%);
             width: 85%;
             max-width: 340px;
-            z-index: 9999;
+            z-index: 99999 !important; /* Forces buttons to stay on top, never blocking the video */
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -47,7 +56,7 @@
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.6);
-            z-index: 999;
+            z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -65,18 +74,21 @@
 </head>
 <body>
 
+    <!-- Scanning UI -->
     <div id="scanning-overlay">
         <div class="scan-box"></div>
         <div class="scan-text">Scan Business Card</div>
         <p style="color: #ccc; font-size: 13px; margin-top: 8px;">Point your camera at the front of the card</p>
     </div>
 
+    <!-- Action Buttons -->
     <div class="ui-container" id="uiContainer" style="display: none;">
-        <a href="https://my-profile-10.blogspot.com/p/business-oppertunity.html" target="_blank" class="action-btn">Business Opportunity</a>
-        <a href="tel:+918129848821" class="action-btn">Call Now</a>
+        <a href="https://your-business-opportunity-link.com" target="_blank" class="action-btn">Business Opportunity</a>
+        <a href="tel:+919999999999" class="action-btn">Call Now</a>
         <a href="https://your-main-website.com" target="_blank" class="action-btn">Visit Website</a>
     </div>
 
+    <!-- AR Scene Context -->
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no;" 
              embedded vr-mode-ui="enabled: false" 
              device-orientation-permission-ui="enabled: false">
@@ -87,9 +99,10 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+        <!-- Target Anchor 0 -->
         <a-entity id="cardTarget" mindar-image-target="targetIndex: 0">
-            <a-mesh material="color: #000; opacity: 0.01;" geometry="primitive: plane; width: 1; height: 0.55;"></a-mesh>
-            <a-video src="#arVideo" position="0 0 0.01" height="0.55" width="1" rotation="0 0 0"></a-video>
+            <!-- Video layer pushed forward in 3D space (position 0 0 0.1) so it floats beautifully above the card layers -->
+            <a-video src="#arVideo" position="0 0 0.1" height="0.55" width="1" rotation="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
