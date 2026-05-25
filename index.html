@@ -55,7 +55,7 @@
             color: #fff;
         }
         .scan-box {
-            width: 240px; height: 150px; /* Standard Business Card Ratio */
+            width: 240px; height: 150px; 
             border: 3px dashed #D4AF37;
             border-radius: 12px;
             margin-bottom: 25px;
@@ -88,7 +88,8 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity id="cardTarget" mindar-image-target="targetIndex: 0">
-            <a-video src="#arVideo" position="0 0 0" height="0.55" width="1" rotation="0 0 0"></a-video>
+            <a-mesh material="color: #000; opacity: 0.01;" geometry="primitive: plane; width: 1; height: 0.55;"></a-mesh>
+            <a-video src="#arVideo" position="0 0 0.01" height="0.55" width="1" rotation="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
@@ -98,12 +99,10 @@
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
                 .then(function(stream) {
-                    console.log("Camera access granted by user.");
-                    // Stop the stream instantly just to let Mind-AR take over cleanly
                     stream.getTracks().forEach(track => track.stop());
                 })
                 .catch(function(err) {
-                    alert("Camera Blocked! Please allow camera permission from site settings/lock icon.");
+                    alert("Camera Blocked! Please allow camera permission from site settings.");
                 });
             }
         });
