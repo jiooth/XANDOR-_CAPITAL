@@ -1,1 +1,0 @@
-# XANDOR-_CAPITAL
