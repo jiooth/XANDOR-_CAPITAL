@@ -3,24 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Xandor Capital</title>
+    <title>Xandor Capital AR Experience</title>
     
-    <!-- Latest Stable A-Frame and Mind-AR Libraries -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.1/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
+        /* Pure transparent window view for camera */
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            overflow: hidden; 
+            background-color: transparent !important; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+        }
         
-        /* Interactive Video Fix for Mobile (Z-Index Isolate) */
+        /* Forcing AR Scene canvas layer to be fully transparent background */
         a-scene {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 1; /* Pure camera view moves to back layer */
+            z-index: 1;
+            background: none !important;
+            background-color: transparent !important;
         }
 
-        /* Premium Gold Buttons UI Container (Isolated on top layer) */
+        /* Video canvas overlay handling */
+        .a-canvas {
+            background-color: transparent !important;
+        }
+
+        /* Floating Premium Gold Buttons UI Container (Fully Transparent Backing) */
         .ui-container {
             position: fixed;
             bottom: 40px;
@@ -28,17 +43,19 @@
             transform: translateX(-50%);
             width: 85%;
             max-width: 340px;
-            z-index: 99999 !important; /* Forces buttons to stay on top, never blocking the video */
+            z-index: 99999 !important; 
             display: flex;
             flex-direction: column;
             gap: 12px;
+            background: transparent !important; /* No black backgrounds allowed */
+            background-color: transparent !important;
         }
         
         .action-btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 12px;
             color: #000000;
             font-size: 15px;
@@ -47,15 +64,15 @@
             letter-spacing: 1px;
             text-align: center;
             text-decoration: none;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
             display: block;
         }
 
-        /* Scanning Overlay Grid */
+        /* Scanning Transparent Overlay Grid */
         #scanning-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.4); /* Light semi-transparent shade only during scanning */
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -74,24 +91,22 @@
 </head>
 <body>
 
-    <!-- Scanning UI -->
     <div id="scanning-overlay">
         <div class="scan-box"></div>
         <div class="scan-text">Scan Business Card</div>
         <p style="color: #ccc; font-size: 13px; margin-top: 8px;">Point your camera at the front of the card</p>
     </div>
 
-    <!-- Action Buttons -->
     <div class="ui-container" id="uiContainer" style="display: none;">
         <a href="https://your-business-opportunity-link.com" target="_blank" class="action-btn">Business Opportunity</a>
         <a href="tel:+919999999999" class="action-btn">Call Now</a>
         <a href="https://your-main-website.com" target="_blank" class="action-btn">Visit Website</a>
     </div>
 
-    <!-- AR Scene Context -->
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no;" 
              embedded vr-mode-ui="enabled: false" 
-             device-orientation-permission-ui="enabled: false">
+             device-orientation-permission-ui="enabled: false"
+             color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights: true">
         
         <a-assets>
             <video id="arVideo" src="./myvideo.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
@@ -99,10 +114,8 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- Target Anchor 0 -->
         <a-entity id="cardTarget" mindar-image-target="targetIndex: 0">
-            <!-- Video layer pushed forward in 3D space (position 0 0 0.1) so it floats beautifully above the card layers -->
-            <a-video src="#arVideo" position="0 0 0.1" height="0.55" width="1" rotation="0 0 0"></a-video>
+            <a-video src="#arVideo" position="0 0 0.15" height="0.55" width="1" rotation="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
