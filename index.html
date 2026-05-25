@@ -4,30 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Xandor Capital</title>
-    <!-- Mind-AR aur A-Frame Libraries -->
+    
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.1/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
         
-        /* UI Buttons Styling - Fixed at bottom for ultra smooth tapping experience */
+        /* Premium Gold Buttons UI Container */
         .ui-container {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 360px;
+            width: 85%;
+            max-width: 340px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            pointer-events: none; /* Allows clicks to bypass container border */
         }
         
         .action-btn {
-            pointer-events: auto; /* Re-enables clicking on the actual buttons */
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
@@ -40,109 +38,91 @@
             letter-spacing: 1px;
             text-align: center;
             text-decoration: none;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.4);
-            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             display: block;
         }
 
-        .action-btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        }
-
-        /* Scanning overlay instructions */
+        /* Scanning Overlay Grid */
         #scanning-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.6);
             z-index: 999;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             color: #fff;
-            text-align: center;
-            padding: 20px;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
         }
         .scan-box {
-            width: 220px; height: 220px;
+            width: 240px; height: 150px; /* Standard Business Card Ratio */
             border: 3px dashed #D4AF37;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+            border-radius: 12px;
+            margin-bottom: 25px;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.6; }
-        }
-        .scan-text { color: #D4AF37; font-weight: bold; letter-spacing: 1px; font-size: 16px; }
+        .scan-text { color: #D4AF37; font-weight: bold; letter-spacing: 1px; font-size: 18px; text-transform: uppercase;}
     </style>
 </head>
 <body>
 
-    <!-- Scanning Prompt Overlay -->
     <div id="scanning-overlay">
         <div class="scan-box"></div>
-        <div class="scan-text">SCAN BUSINESS CARD</div>
-        <p style="color: #ccc; font-size: 13px; margin-top: 8px;">Point camera at the front of your card</p>
+        <div class="scan-text">Scan Business Card</div>
+        <p style="color: #ccc; font-size: 13px; margin-top: 8px;">Point your camera at the front of the card</p>
     </div>
 
-    <!-- Interactive Gold Action Buttons (Will appear once card is scanned) -->
     <div class="ui-container" id="uiContainer" style="display: none;">
-        <!-- Button 1: Business Opportunity Page (Aapka link badal sakte hain) -->
         <a href="https://my-profile-10.blogspot.com/p/business-oppertunity.html" target="_blank" class="action-btn">Business Opportunity</a>
-        
-        <!-- Button 2: Direct Phone Call (Replace with your number) -->
         <a href="tel:+918129848820" class="action-btn">Call Now</a>
-        
-        <!-- Button 3: Main Corporate Website -->
-        <a href="https://my-profile-10.blogspot.com/p/xandor-capital.html" target="_blank" class="action-btn">Visit Website</a>
+        <a href="https://your-main-website.com" target="_blank" class="action-btn">Visit Website</a>
     </div>
 
-    <!-- AR Scene Context -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; showLoading: false; uiScanning: no;" 
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no;" 
              embedded vr-mode-ui="enabled: false" 
              device-orientation-permission-ui="enabled: false">
         
         <a-assets>
-            <!-- Video asset pre-loading -->
             <video id="arVideo" src="./myvideo.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
         </a-assets>
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <!-- Target Anchor 0 (The card itself) -->
         <a-entity id="cardTarget" mindar-image-target="targetIndex: 0">
-            <!-- 3D Plane where the video plays directly overlayed on the physical card -->
             <a-video src="#arVideo" position="0 0 0" height="0.55" width="1" rotation="0 0 0"></a-video>
         </a-entity>
     </a-scene>
 
     <script>
+        // Force Camera Permission Prompt on Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(function(stream) {
+                    console.log("Camera access granted by user.");
+                    // Stop the stream instantly just to let Mind-AR take over cleanly
+                    stream.getTracks().forEach(track => track.stop());
+                })
+                .catch(function(err) {
+                    alert("Camera Blocked! Please allow camera permission from site settings/lock icon.");
+                });
+            }
+        });
+
         const targetEntity = document.querySelector('#cardTarget');
         const videoElement = document.querySelector('#arVideo');
         const uiContainer = document.querySelector('#uiContainer');
         const overlay = document.querySelector('#scanning-overlay');
 
-        // When the camera successfully finds and targets the physical business card
         targetEntity.addEventListener("targetFound", event => {
-            console.log("Card scanned successfully.");
-            videoElement.play(); // Auto-play the video on top of the card
-            overlay.style.opacity = "0"; // Hide the scanning lines
-            setTimeout(() => overlay.style.display = "none", 500);
-            uiContainer.style.display = "flex"; // Slide/Show the premium buttons
+            videoElement.play(); 
+            overlay.style.display = "none";
+            uiContainer.style.display = "flex"; 
         });
 
-        // If the camera loses track of the physical card
         targetEntity.addEventListener("targetLost", event => {
-            console.log("Card tracking lost.");
-            videoElement.pause(); // Pause video when user looks away
+            videoElement.pause(); 
             overlay.style.display = "flex";
-            overlay.style.opacity = "1";
-            uiContainer.style.display = "none"; // Hide buttons to keep UI clean
+            uiContainer.style.display = "none"; 
         });
     </script>
 </body>
