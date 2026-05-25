@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Xandor Capital</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
         
-        /* UI Buttons Styling - Fixed at bottom for ultra smooth tapping experience */
+        /* UI Buttons Styling */
         .ui-container {
             position: fixed;
             bottom: 30px;
@@ -22,11 +23,11 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            pointer-events: none; /* Allows clicks to bypass container border */
+            pointer-events: none;
         }
         
         .action-btn {
-            pointer-events: auto; /* Re-enables clicking on the actual buttons */
+            pointer-events: auto;
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #D4AF37 0%, #AA7C11 100%);
@@ -49,14 +50,11 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
  
-        /* Scanning overlay instructions - BADLAAV: Isko poora transparent kar diya hai */
+        /* Transparent Scanning Overlay */
         #scanning-overlay {
             position: fixed;
-            top: 0;
-            left: 0; 
-            right: 0; 
-            bottom: 0;
-            background: rgba(0, 0, 0, 0); /* Yahan pehle rgba(0,0,0,0.7) tha, ab poora transparent (0) hai */
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0); /* Poora transparent background */
             z-index: 999;
             display: flex;
             justify-content: center;
@@ -69,7 +67,6 @@
             transition: opacity 0.5s ease;
         }
         
-        /* Text ke piche thoda shadow taaki transparent background par bhi text saaf dikhe */
         .scan-text { 
             color: #D4AF37; 
             font-weight: bold; 
@@ -92,7 +89,7 @@
             border-radius: 16px;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5); /* Box ko highlight karne ke liye */
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
         @keyframes pulse {
@@ -112,27 +109,22 @@
  
     <div class="ui-container" id="uiContainer" style="display: none;">
         <a href="https://my-profile-10.blogspot.com/p/business-oppertunity.html" target="_blank" class="action-btn">Business Opportunity</a>
-        
         <a href="tel:+918129848820" class="action-btn">Call Now</a>
-
         <a href="https://wa.me/918129848820" class="action-btn" target="_blank">WhatsApp Us</a>
-        
         <a href="https://my-profile-10.blogspot.com/p/welcome.html" target="_blank" class="action-btn">Visit Website</a>
     </div>
  
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; showLoading: false; uiScanning: no;" 
              embedded 
              vr-mode-ui="enabled: false" 
-             device-orientation-permission-ui="enabled: false">
-        
-       <a-assets>
+             device-orientation-permission-ui="enabled: true"> <a-assets>
             <video id="arVideo" src="./myvideo.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
        </a-assets>
  
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
  
         <a-entity id="cardTarget" mindar-image-target="targetIndex: 0">
-            <a-video src="#arVideo" position="0 0 0" height="0.55" width="1" rotation="0 0 0"></a-video>
+           <a-video src="#arVideo" position="0 0 0" height="0.55" width="1" rotation="0 0 0"></a-video>
         </a-entity>
     </a-scene>
  
@@ -142,22 +134,20 @@
         const uiContainer = document.querySelector('#uiContainer');
         const overlay = document.querySelector('#scanning-overlay');
  
-        // When the camera successfully finds and targets the physical business card
         targetEntity.addEventListener("targetFound", event => {
             console.log("Card scanned successfully.");
-            videoElement.play(); // Auto-play the video on top of the card
-            overlay.style.opacity = "0"; // Hide the scanning lines
+            videoElement.play();
+            overlay.style.opacity = "0";
             setTimeout(() => overlay.style.display = "none", 500);
-            uiContainer.style.display = "flex"; // Slide/Show the premium buttons
+            uiContainer.style.display = "flex";
         });
  
-        // If the camera loses track of the physical card
         targetEntity.addEventListener("targetLost", event => {
             console.log("Card tracking lost.");
-            videoElement.pause(); // Pause video when user looks away
+            videoElement.pause();
             overlay.style.display = "flex";
             overlay.style.opacity = "1";
-            uiContainer.style.display = "none"; // Hide buttons to keep UI clean
+            uiContainer.style.display = "none";
         });
     </script>
 </body>
